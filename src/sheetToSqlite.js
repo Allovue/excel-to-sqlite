@@ -8,7 +8,7 @@ async function saveToSqlite(name) {
   let dataTypes = [];
   this.data.forEach(data => {
     for (let name in data) {
-      if (!dataTypes.includes(`'${name}' TEXT DEFAULT ''`)) dataTypes.push(`'${name}' TEXT DEFAULT ''`);
+      if (!dataTypes.includes(`\`${name}\` TEXT DEFAULT ''`)) dataTypes.push(`\`${name}\` TEXT DEFAULT ''`);
     }
   });
   // Return promise and execute database query
@@ -28,7 +28,12 @@ async function saveToSqlite(name) {
             values.push(row[i]);
             rowNames.push(i);
           }
-          database.all(`INSERT INTO ${this._name} ('${rowNames.join("', '")}') VALUES ('${values.join("', '")}')`, (e) => {
+          values.forEach(function(value, index) {
+            if(typeof value === 'string') {
+              values[index] = value.replace("'", "''");
+            }
+          }) 
+          database.all(`INSERT INTO ${this._name} (\`${rowNames.join("\`, \`")}\`) VALUES ('${values.join("', '")}')`, (e) => {
             if (e) throw new Error(`Insert error:  ${e}`);
             done++;
           });
