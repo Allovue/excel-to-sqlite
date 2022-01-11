@@ -14,10 +14,10 @@ async function saveToSqlite(name) {
   // Return promise and execute database query
   return new Promise((res) => {
     // Remove a table with the same name as the sheet
-    database.all(`DROP TABLE IF EXISTS ${this._name}`, (e) => {
+    database.all(`DROP TABLE IF EXISTS \`${this._name}\``, (e) => {
       if (e) throw new Error(`Drop table error: ${e}`);
       // Create the table with the datatypes
-      database.all(`CREATE TABLE IF NOT EXISTS ${this._name} (${dataTypes.join(", ")})`, (e) => {
+      database.all(`CREATE TABLE IF NOT EXISTS \`${this._name}\` (${dataTypes.join(", ")})`, (e) => {
         if (e) throw new Error(`Create table error: ${e}`);
         // Insert data
         let done = 0;
@@ -33,7 +33,7 @@ async function saveToSqlite(name) {
               values[index] = value.replace("'", "''");
             }
           }) 
-          database.all(`INSERT INTO ${this._name} (\`${rowNames.join("\`, \`")}\`) VALUES ('${values.join("', '")}')`, (e) => {
+          database.all(`INSERT INTO \`${this._name}\` (\`${rowNames.join("\`, \`")}\`) VALUES ('${values.join("', '")}')`, (e) => {
             if (e) throw new Error(`Insert error:  ${e}`);
             done++;
           });
